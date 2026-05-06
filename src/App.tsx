@@ -16,6 +16,7 @@ import Blog from "./pages/Blog";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Resumes from "./pages/Resumes";
+import ResumeDetail from "./pages/ResumeDetail";
 import Verify from "./pages/Verify";
 import Recruiters from "./pages/Recruiters";
 import Settings from "./pages/Settings";
@@ -49,6 +50,7 @@ const App = () => (
               >
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/dashboard/resumes" element={<Resumes />} />
+                <Route path="/dashboard/resumes/:id" element={<ResumeDetail />} />
                 <Route path="/dashboard/recruiters" element={<Recruiters />} />
                 <Route path="/dashboard/settings" element={<Settings />} />
               </Route>

@@ -16,6 +16,7 @@ import Blog from "./pages/Blog";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Resumes from "./pages/Resumes";
+import ResumeDetail from "./pages/ResumeDetail";
 import Verify from "./pages/Verify";
 import Recruiters from "./pages/Recruiters";
 import Settings from "./pages/Settings";

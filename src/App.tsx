@@ -19,6 +19,8 @@ import Resumes from "./pages/Resumes";
 import ResumeDetail from "./pages/ResumeDetail";
 import Verify from "./pages/Verify";
 import Recruiters from "./pages/Recruiters";
+import Certificates from "./pages/Certificates";
+import Admin from "./pages/Admin";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -51,7 +53,9 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/dashboard/resumes" element={<Resumes />} />
                 <Route path="/dashboard/resumes/:id" element={<ResumeDetail />} />
+                <Route path="/dashboard/certificates" element={<Certificates />} />
                 <Route path="/dashboard/recruiters" element={<Recruiters />} />
+                <Route path="/dashboard/admin" element={<Admin />} />
                 <Route path="/dashboard/settings" element={<Settings />} />
               </Route>
               <Route path="*" element={<NotFound />} />

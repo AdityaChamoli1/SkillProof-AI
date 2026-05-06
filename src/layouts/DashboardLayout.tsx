@@ -3,20 +3,41 @@ import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { LayoutDashboard, FileText, Users, Settings as SettingsIcon, ShieldCheck, LogOut, Sun, Moon } from "lucide-react";
+import { LayoutDashboard, FileText, Users, Settings as SettingsIcon, ShieldCheck, LogOut, Sun, Moon, Award, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-const items = [
+const baseItems = [
   { to: "/dashboard", label: "Overview", icon: LayoutDashboard, end: true },
   { to: "/dashboard/resumes", label: "Resumes", icon: FileText },
+  { to: "/dashboard/certificates", label: "Certificates", icon: Award },
   { to: "/dashboard/recruiters", label: "Recruiters", icon: Users },
   { to: "/dashboard/settings", label: "Settings", icon: SettingsIcon },
 ];
 
 function AppSidebar() {
   const { pathname } = useLocation();
+  const { user } = useAuth();
+  const [items, setItems] = useState(baseItems);
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .then(({ data }) => {
+        if (data?.some((r) => r.role === "admin")) {
+          setItems([
+            ...baseItems.slice(0, -1),
+            { to: "/dashboard/admin", label: "Admin", icon: BarChart3 },
+            baseItems[baseItems.length - 1],
+          ]);
+        }
+      });
+  }, [user]);
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>

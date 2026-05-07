@@ -17,8 +17,10 @@ export type Database = {
       certificates: {
         Row: {
           blockchain_tx: string | null
+          content_type: string | null
           created_at: string
           file_hash: string | null
+          file_size: number | null
           file_url: string | null
           id: string
           ipfs_cid: string | null
@@ -30,8 +32,10 @@ export type Database = {
         }
         Insert: {
           blockchain_tx?: string | null
+          content_type?: string | null
           created_at?: string
           file_hash?: string | null
+          file_size?: number | null
           file_url?: string | null
           id?: string
           ipfs_cid?: string | null
@@ -43,8 +47,10 @@ export type Database = {
         }
         Update: {
           blockchain_tx?: string | null
+          content_type?: string | null
           created_at?: string
           file_hash?: string | null
+          file_size?: number | null
           file_url?: string | null
           id?: string
           ipfs_cid?: string | null
@@ -95,8 +101,11 @@ export type Database = {
           ai_summary: string | null
           ats_score: number | null
           created_at: string
+          file_hash: string | null
           file_url: string | null
           id: string
+          parsed_metadata: Json
+          processing_error: string | null
           raw_text: string | null
           skills: Json | null
           status: string
@@ -110,8 +119,11 @@ export type Database = {
           ai_summary?: string | null
           ats_score?: number | null
           created_at?: string
+          file_hash?: string | null
           file_url?: string | null
           id?: string
+          parsed_metadata?: Json
+          processing_error?: string | null
           raw_text?: string | null
           skills?: Json | null
           status?: string
@@ -125,8 +137,11 @@ export type Database = {
           ai_summary?: string | null
           ats_score?: number | null
           created_at?: string
+          file_hash?: string | null
           file_url?: string | null
           id?: string
+          parsed_metadata?: Json
+          processing_error?: string | null
           raw_text?: string | null
           skills?: Json | null
           status?: string

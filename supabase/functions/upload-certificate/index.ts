@@ -10,6 +10,7 @@ const corsHeaders = {
 const MAX_BYTES = 15 * 1024 * 1024;
 const ALLOWED_TYPES = new Set(["application/pdf", "image/png", "image/jpeg", "image/webp"]);
 const ALLOWED_EXTENSIONS = new Set(["pdf", "png", "jpg", "jpeg", "webp"]);
+const HASH_PATTERN = /^[a-f0-9]{64}$/i;
 
 function json(body: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -65,6 +66,7 @@ Deno.serve(async (req) => {
     const title = cleanText(form.get("title"));
     const issuer = cleanText(form.get("issuer"));
     const issuedAt = cleanText(form.get("issued_at"));
+    const clientHash = cleanText(form.get("client_hash")).toLowerCase();
 
     if (!title) return json({ error: "Add a certificate title before uploading." }, 400);
     if (!(file instanceof File)) return json({ error: "Attach a PDF or image certificate file." }, 400);
@@ -79,8 +81,25 @@ Deno.serve(async (req) => {
 
     const bytes = await file.arrayBuffer();
     const hash = await sha256Hex(bytes);
+    if (clientHash && (!HASH_PATTERN.test(clientHash) || clientHash !== hash)) {
+      return json({ error: "Certificate fingerprint mismatch. Please retry the upload." }, 400);
+    }
     const userId = userData.user.id;
     const admin = createClient(supabaseUrl, serviceKey);
+
+    const { data: existing, error: existingErr } = await admin
+      .from("certificates")
+      .select("id,title,issuer,issued_at,file_hash,file_url,verified,created_at,content_type,file_size")
+      .eq("user_id", userId)
+      .eq("file_hash", hash)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (existingErr) {
+      console.error("certificate duplicate lookup error", existingErr);
+      return json({ error: "Could not check for duplicate credentials." }, 500);
+    }
+    if (existing) return json({ ok: true, duplicate: true, certificate: existing }, 200);
 
     const path = `${userId}/${crypto.randomUUID()}.${ext}`;
     const contentType = file.type || (ext === "pdf" ? "application/pdf" : `image/${ext === "jpg" ? "jpeg" : ext}`);

@@ -41,6 +41,7 @@ const App = () => (
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/verify" element={<Verify />} />
+                <Route path="/verify/:id" element={<Verify />} />
               </Route>
               <Route path="/auth" element={<Auth />} />
               <Route

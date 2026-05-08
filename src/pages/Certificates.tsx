@@ -127,6 +127,15 @@ function writeCachedCredentials(userId: string, credentials: Cert[]) {
   localStorage.setItem(cacheKey(userId), JSON.stringify(credentials.slice(0, 50)));
 }
 
+function fileToDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error("Could not create a local certificate preview."));
+    reader.readAsDataURL(file);
+  });
+}
+
 function publicCredentialUrl(cert: Cert) {
   return `${window.location.origin}/verify/${cert.id}`;
 }
@@ -252,7 +261,7 @@ export default function Certificates() {
 
   const saveLocalFallback = async (file: File, fingerprint: string): Promise<Cert | null> => {
     if (!user || file.size > 2 * 1024 * 1024) return null;
-    const localUrl = URL.createObjectURL(file);
+    const localUrl = await fileToDataUrl(file);
     const localCredential: Cert = {
       id: crypto.randomUUID(),
       title: title.trim(),

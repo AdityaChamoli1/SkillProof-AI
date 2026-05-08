@@ -212,7 +212,7 @@ export default function Certificates() {
   }, [user?.id]);
 
   const uploadWithProgress = (file: File, fingerprint: string) =>
-    new Promise<any>((resolve, reject) => {
+    new Promise<{ certificate?: Cert }>((resolve, reject) => {
       if (!session?.access_token) {
         reject(new Error("Your session expired. Please sign in again."));
         return;
@@ -329,8 +329,8 @@ export default function Certificates() {
       setIssuedAt("");
       await load();
       window.setTimeout(() => setUploadState(null), 2800);
-    } catch (error: any) {
-      const message = error?.message ?? "Certificate upload failed.";
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Certificate upload failed.";
       console.error("certificate upload failed", error);
       const fingerprint = uploadState?.fingerprint ?? (await sha256Hex(file).catch(() => undefined));
       let fallbackMessage = message;

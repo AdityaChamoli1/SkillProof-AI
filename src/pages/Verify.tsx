@@ -96,7 +96,6 @@ export default function Verify() {
 
   useEffect(() => {
     if (initialQuery) verify(initialQuery);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialQuery]);
 
   const copy = async (value: string, label: string) => {

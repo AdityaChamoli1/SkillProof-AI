@@ -86,8 +86,8 @@ export default function MarketingLayout() {
           </div>
           {[
             { title: "Product", links: [["Features", "/features"], ["Pricing", "/pricing"], ["Verify", "/verify"]] },
-            { title: "Company", links: [["Blog", "/blog"], ["About", "#"], ["Contact", "#"]] },
-            { title: "Legal", links: [["Privacy", "#"], ["Terms", "#"], ["Security", "#"]] },
+            { title: "Company", links: [["Blog", "/blog"], ["About", "/about"], ["Contact", "/contact"]] },
+            { title: "Legal", links: [["Privacy", "/privacy"], ["Terms", "/terms"], ["Security", "/security"]] },
           ].map((col) => (
             <div key={col.title}>
               <h4 className="mb-3 text-sm font-semibold">{col.title}</h4>

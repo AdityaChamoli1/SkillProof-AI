@@ -58,21 +58,6 @@ export default function Auth() {
     }
   };
 
-  const handleGoogle = async () => {
-    try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/dashboard`,
-      });
-      if (result.error) {
-        toast.error("Google sign-in failed");
-        return;
-      }
-      if (result.redirected) return;
-      navigate("/dashboard");
-    } catch {
-      toast.error("Google sign-in failed");
-    }
-  };
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">

@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import Auth0ProviderWithNavigate from "@/auth/Auth0ProviderWithNavigate";
 import MarketingLayout from "@/layouts/MarketingLayout";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -38,8 +39,9 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AuthProvider>
-            <Routes>
+          <Auth0ProviderWithNavigate>
+            <AuthProvider>
+              <Routes>
               <Route element={<MarketingLayout />}>
                 <Route path="/" element={<Landing />} />
                 <Route path="/features" element={<Features />} />
@@ -71,7 +73,8 @@ const App = () => (
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </AuthProvider>
+            </AuthProvider>
+          </Auth0ProviderWithNavigate>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>

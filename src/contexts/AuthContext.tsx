@@ -1,41 +1,67 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth0 } from "@auth0/auth0-react";
+
+type AuthUser = {
+  id: string;
+  email?: string;
+  name?: string;
+  picture?: string;
+};
+
+type AuthSession = {
+  access_token: string;
+} | null;
 
 type AuthCtx = {
-  user: User | null;
-  session: Session | null;
+  user: AuthUser | null;
+  session: AuthSession;
   loading: boolean;
   signOut: () => Promise<void>;
 };
 
-const Ctx = createContext<AuthCtx>({ user: null, session: null, loading: true, signOut: async () => {} });
+const Ctx = createContext<AuthCtx>({
+  user: null,
+  session: null,
+  loading: true,
+  signOut: async () => {},
+});
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, isLoading, isAuthenticated, logout, getIdTokenClaims } = useAuth0();
+  const [session, setSession] = useState<AuthSession>(null);
 
   useEffect(() => {
-    // 1. Listener first
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-    });
-    // 2. Then existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-    return () => sub.subscription.unsubscribe();
-  }, []);
+    let active = true;
+    if (isAuthenticated) {
+      getIdTokenClaims().then((claims) => {
+        if (active && claims?.__raw) setSession({ access_token: claims.__raw });
+      });
+    } else {
+      setSession(null);
+    }
+    return () => {
+      active = false;
+    };
+  }, [isAuthenticated, getIdTokenClaims]);
+
+  const mapped: AuthUser | null = user
+    ? {
+        id: user.sub ?? "",
+        email: user.email,
+        name: user.name,
+        picture: user.picture,
+      }
+    : null;
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await logout({ logoutParams: { returnTo: window.location.origin } });
   };
 
-  return <Ctx.Provider value={{ user, session, loading, signOut }}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={{ user: mapped, session, loading: isLoading, signOut }}>
+      {children}
+    </Ctx.Provider>
+  );
 };
 
 export const useAuth = () => useContext(Ctx);
